@@ -78,6 +78,13 @@ module Lograge
   #  - :logstash - JSON formatted as a Logstash Event.
   mattr_accessor :formatter
 
+  # Add quotes to the key-value log formatter
+  #
+  # The default is not to do this, but if set to true
+  # values will be output in double quotes
+  mattr_accessor :kv_quote
+  self.kv_quote ||= false
+
   def self.remove_existing_log_subscriptions
     ActiveSupport::LogSubscriber.log_subscribers.each do |subscriber|
       case subscriber
@@ -107,6 +114,7 @@ module Lograge
     Lograge::RequestLogSubscriber.attach_to :action_controller
     Lograge.custom_options = app.config.lograge.custom_options
     Lograge.log_level = app.config.lograge.log_level || :info
+    Lograge.kv_quote = app.config.lograge.kv_quote || false
     self.support_deprecated_config(app) # TODO: Remove with version 1.0
     Lograge.formatter = app.config.lograge.formatter || Lograge::Formatters::KeyValue.new
     Lograge.ignore_actions(app.config.lograge.ignore_actions)

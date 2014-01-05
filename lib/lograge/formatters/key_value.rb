@@ -31,7 +31,11 @@ module Lograge
         # Ensure that we always have exactly two decimals
         value = "%.2f" % value if value.is_a? Float
 
-        "#{key}=#{value}"
+        if Lograge.kv_quote
+          "#{key}=\"#{value}\""
+        else
+          "#{key}=#{value}"
+        end
       end
     end
   end
